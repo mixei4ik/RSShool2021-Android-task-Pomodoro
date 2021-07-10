@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.rsshool2021_android_task_pomodoro.databinding.StopwatchItemBinding
 
-class StopwatchAdapter: ListAdapter<Stopwatch, StopwatchViewHolder>(itemComparator) {
+class StopwatchAdapter(
+    private val listener: StopwatchListener
+    ) : ListAdapter<Stopwatch, StopwatchViewHolder>(itemComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StopwatchViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = StopwatchItemBinding.inflate(layoutInflater, parent, false)
-        return StopwatchViewHolder(binding)
+        return StopwatchViewHolder(binding, listener, binding.root.context.resources)
     }
 
     override fun onBindViewHolder(holder: StopwatchViewHolder, position: Int) {
