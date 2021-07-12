@@ -34,6 +34,17 @@
             app:layout_constraintStart_toEndOf="@id/blinking_indicator"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.example.rsshool2021_android_task_pomodoro.CustomView
+            android:id="@+id/custom_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:custom_color="@color/purple_700"
+            app:custom_style="fill"
+            android:layout_marginStart="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/stopwatch_timer"/>
+
         <ImageButton
             android:id="@+id/start_pause_button"
             android:layout_width="0dp"

@@ -48,16 +48,14 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
     }
 
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-        val newTimers = mutableListOf<Stopwatch>()
-        stopwatches.forEach {
-            if (it.id == id) {
-                newTimers.add(Stopwatch(it.id, currentMs ?: it.currentMs, isStarted))
-            } else {
-                newTimers.add(it)
+        for (i in stopwatches.indices) {
+            if (stopwatches[i].id == id) {
+                stopwatches[i] =
+                    Stopwatch(stopwatches[i].id, currentMs ?: stopwatches[i].currentMs, isStarted)
+
             }
         }
-        stopwatchAdapter.submitList(newTimers)
-        stopwatches.clear()
-        stopwatches.addAll(newTimers)
+
+        stopwatchAdapter.submitList(stopwatches.toList())
     }
 }
