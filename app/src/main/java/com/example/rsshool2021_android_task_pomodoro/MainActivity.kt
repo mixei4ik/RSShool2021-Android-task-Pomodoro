@@ -5,12 +5,12 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool2021_android_task_pomodoro.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), StopwatchListener {
+class MainActivity : AppCompatActivity(), TimerListener {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val stopwatchAdapter = StopwatchAdapter(this)
-    private val stopwatches = mutableListOf<Stopwatch>()
+    private val timerAdapter = TimersAdapter(this)
+    private val timers = mutableListOf<Timer>()
     private var nextId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +21,12 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
 
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = stopwatchAdapter
+            adapter = timerAdapter
         }
 
-        binding.addNewStopwatchButton.setOnClickListener {
-            stopwatches.add(Stopwatch(nextId++, 0, false))
-            stopwatchAdapter.submitList(stopwatches.toList())
+        binding.addNewTimerButton.setOnClickListener {
+            timers.add(Timer(nextId++, 0, false))
+            timerAdapter.submitList(timers.toList())
         }
     }
 
@@ -43,19 +43,31 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
     }
 
     override fun delete(id: Int) {
-        stopwatches.remove(stopwatches.find { it.id == id})
-        stopwatchAdapter.submitList(stopwatches.toList())
+        timers.remove(timers.find { it.id == id})
+        timerAdapter.submitList(timers.toList())
     }
 
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-        for (i in stopwatches.indices) {
-            if (stopwatches[i].id == id) {
-                stopwatches[i] =
-                    Stopwatch(stopwatches[i].id, currentMs ?: stopwatches[i].currentMs, isStarted)
+        for (i in timers.indices) {
+            if (timers[i].id == id) {
+                timers[i] =
+                    Timer(timers[i].id, currentMs ?: timers[i].currentMs, isStarted)
 
             }
         }
 
-        stopwatchAdapter.submitList(stopwatches.toList())
+        timerAdapter.submitList(timers.toList())
+
+/*        val newTimers = mutableListOf<Timer>()
+        timers.forEach {
+            if (it.id == id) {
+                newTimers.add(Timer(it.id, currentMs ?: it.currentMs, isStarted))
+            } else {
+                newTimers.add(it)
+            }
+        }
+        timerAdapter.submitList(newTimers)
+        timers.clear()
+        timers.addAll(newTimers)*/
     }
 }
