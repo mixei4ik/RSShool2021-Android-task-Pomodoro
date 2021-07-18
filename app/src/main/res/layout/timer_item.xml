@@ -10,6 +10,7 @@
     android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/timer_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

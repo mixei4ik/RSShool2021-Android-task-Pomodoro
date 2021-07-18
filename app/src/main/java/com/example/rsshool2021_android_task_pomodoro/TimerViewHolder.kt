@@ -1,5 +1,6 @@
 package com.example.rsshool2021_android_task_pomodoro
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
@@ -21,6 +22,7 @@ class TimerViewHolder(
 
     fun bind(timer: Timer) {
         binding.timer.text = timer.currentMs.displayTime()
+        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
         if (timer.isStarted) {
             startTimer(timer)
@@ -36,7 +38,7 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 listener.stop(timer.id, timer.currentMs)
             } else {
-                listener.start(timer.id)
+                listener.start(timer.id, timer.currentMs)
             }
         }
 
@@ -45,6 +47,7 @@ class TimerViewHolder(
 
     private fun startTimer(timer: Timer) {
         binding.startPauseButton.text = "stop"
+        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
         this.timer?.cancel()
         this.timer = getCountDownTimer(timer)
@@ -68,6 +71,7 @@ class TimerViewHolder(
 
     private fun stopTimer(timer: Timer) {
         binding.startPauseButton.text = "start"
+        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
         this.timer?.cancel()
 
@@ -80,26 +84,25 @@ class TimerViewHolder(
             val interval = UNIT_TEN_MS
 
             override fun onTick(millisUntilFinished: Long) {
-                timer.currentMs += interval
+                timer.currentMs -= interval
+                if (timer.currentMs <= 0) onFinish()
                 binding.timer.text = timer.currentMs.displayTime()
             }
 
             override fun onFinish() {
+                listener.stop(timer.id, timer.initMs)
+                binding.timerView.setBackgroundColor(resources.getColor(R.color.red_700))
                 binding.timer.text = timer.currentMs.displayTime()
             }
         }
     }
 
     private fun Long.displayTime(): String {
-        if (this <= 0L) {
-            return START_TIME
-        }
         val h = this / 1000 / 3600
         val m = this / 1000 % 3600 / 60
         val s = this / 1000 % 60
-        val ms = this % 1000 / 10
 
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}:${displaySlot(ms)}"
+        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
     }
 
     private fun displaySlot(count: Long): String {
@@ -112,8 +115,8 @@ class TimerViewHolder(
 
     private companion object {
 
-        private const val START_TIME = "00:00:00:00"
-        private const val UNIT_TEN_MS = 10L
+        private const val STOP_TIME = "00:00:00"
+        private const val UNIT_TEN_MS = 100L
         private const val PERIOD = 1000L * 60L * 60L * 24L
 
         private const val INTERVAL = 100L

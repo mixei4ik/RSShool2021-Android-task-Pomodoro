@@ -23,51 +23,48 @@ class MainActivity : AppCompatActivity(), TimerListener {
             layoutManager = LinearLayoutManager(context)
             adapter = timerAdapter
         }
-
+        2
         binding.addNewTimerButton.setOnClickListener {
-            timers.add(Timer(nextId++, 0, false))
-            timerAdapter.submitList(timers.toList())
+            var currentMin = 0L
+            currentMin = if (binding.timeEdit.text.toString() == "") {
+                0
+            } else {
+                binding.timeEdit.text.toString().toLong()
+            }
+            if (currentMin > 0) {
+                timers.add(Timer(nextId++, currentMin * 60 * 1000, currentMin * 60 * 1000, false))
+                timerAdapter.submitList(timers.toList())
+            }
         }
     }
 
-    override fun start(id: Int) {
-        changeStopwatch(id, null, true)
+    override fun start(id: Int, currentMs: Long) {
+        changeTimer(id, currentMs, true)
     }
 
     override fun stop(id: Int, currentMs: Long) {
-        changeStopwatch(id, currentMs, false)
+        changeTimer(id, currentMs, false)
     }
 
     override fun reset(id: Int) {
-        changeStopwatch(id, 0L, false)
+        changeTimer(id, 0L, false)
     }
 
     override fun delete(id: Int) {
-        timers.remove(timers.find { it.id == id})
+        timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
     }
 
-    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
+    private fun changeTimer(id: Int, currentMs: Long, isStarted: Boolean) {
         for (i in timers.indices) {
+            timers[i] = Timer(timers[i].id, timers[i].initMs, timers[i].currentMs, false)
             if (timers[i].id == id) {
                 timers[i] =
-                    Timer(timers[i].id, currentMs ?: timers[i].currentMs, isStarted)
+                    Timer(timers[i].id, timers[i].initMs, currentMs, isStarted)
 
             }
         }
 
         timerAdapter.submitList(timers.toList())
-
-/*        val newTimers = mutableListOf<Timer>()
-        timers.forEach {
-            if (it.id == id) {
-                newTimers.add(Timer(it.id, currentMs ?: it.currentMs, isStarted))
-            } else {
-                newTimers.add(it)
-            }
-        }
-        timerAdapter.submitList(newTimers)
-        timers.clear()
-        timers.addAll(newTimers)*/
     }
 }
