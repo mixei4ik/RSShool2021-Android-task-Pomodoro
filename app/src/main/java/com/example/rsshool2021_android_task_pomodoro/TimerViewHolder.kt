@@ -58,10 +58,10 @@ class TimerViewHolder(
 
 
 
-/*        binding.customView.setPeriod(PERIOD_CUSTOM)
+ /*       binding.customView.setPeriod(timer.initMs)
 
         GlobalScope.launch {
-            while (current < PERIOD_CUSTOM * REPEAT) {
+            while (current < timer.initMs) {
                 current += INTERVAL
                 binding.customView.setCurrent(current)
                 delay(INTERVAL)
@@ -79,6 +79,8 @@ class TimerViewHolder(
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
 
+
+
     private fun getCountDownTimer(timer: Timer): CountDownTimer {
         return object : CountDownTimer(PERIOD, UNIT_TEN_MS) {
             val interval = UNIT_TEN_MS
@@ -94,22 +96,6 @@ class TimerViewHolder(
                 binding.timerView.setBackgroundColor(resources.getColor(R.color.red_700))
                 binding.timer.text = timer.currentMs.displayTime()
             }
-        }
-    }
-
-    private fun Long.displayTime(): String {
-        val h = this / 1000 / 3600
-        val m = this / 1000 % 3600 / 60
-        val s = this / 1000 % 60
-
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
-    }
-
-    private fun displaySlot(count: Long): String {
-        return if (count / 10L > 0) {
-            "$count"
-        } else {
-            "0$count"
         }
     }
 

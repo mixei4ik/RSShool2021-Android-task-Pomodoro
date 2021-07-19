@@ -1,20 +1,24 @@
 package com.example.rsshool2021_android_task_pomodoro
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool2021_android_task_pomodoro.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), TimerListener {
+class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     private lateinit var binding: ActivityMainBinding
 
     private val timerAdapter = TimersAdapter(this)
     private val timers = mutableListOf<Timer>()
     private var nextId = 0
+    private var startTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -23,7 +27,7 @@ class MainActivity : AppCompatActivity(), TimerListener {
             layoutManager = LinearLayoutManager(context)
             adapter = timerAdapter
         }
-        2
+
         binding.addNewTimerButton.setOnClickListener {
             var currentMin = 0L
             currentMin = if (binding.timeEdit.text.toString() == "") {
@@ -36,6 +40,30 @@ class MainActivity : AppCompatActivity(), TimerListener {
                 timerAdapter.submitList(timers.toList())
             }
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackgrounded() {
+        var currentMsFS = 0L
+        for (i in timers.indices) {
+            if (timers[i].isStarted) {
+                currentMsFS = timers[i].currentMs
+            }
+        }
+
+        startTime = System.currentTimeMillis()
+        val startIntent = Intent(this, ForegroundService::class.java)
+        startIntent.putExtra(COMMAND_ID, COMMAND_START)
+        startIntent.putExtra(STARTED_TIMER_TIME_MS, startTime)
+        startIntent.putExtra(CURRENT_MS, currentMsFS)
+        startService(startIntent)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+        val stopIntent = Intent(this, ForegroundService::class.java)
+        stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
+        startService(stopIntent)
     }
 
     override fun start(id: Int, currentMs: Long) {

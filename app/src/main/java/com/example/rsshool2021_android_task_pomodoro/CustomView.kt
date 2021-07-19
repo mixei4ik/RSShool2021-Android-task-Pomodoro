@@ -29,7 +29,7 @@ class CustomView @JvmOverloads constructor(
                 defStyleAttr,
                 0
             )
-            color = styledAttrs.getColor(R.styleable.CustomView_custom_color, Color.RED)
+            color = resources.getColor(R.color.red_400)
             style = styledAttrs.getInt(R.styleable.CustomView_custom_style, FILL)
             styledAttrs.recycle()
         }
