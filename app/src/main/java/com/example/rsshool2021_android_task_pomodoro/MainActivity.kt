@@ -114,7 +114,6 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                     }
                 }
 
-
                 delay(100L)
             }
         }
