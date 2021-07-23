@@ -4,5 +4,6 @@ data class Timer(
     val id: Int,
     val initMs: Long,
     var currentMs: Long,
-    var isStarted: Boolean
+    var isStarted: Boolean,
+    var isFinished: Boolean
 )

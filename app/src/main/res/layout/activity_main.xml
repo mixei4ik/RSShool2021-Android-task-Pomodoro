@@ -20,12 +20,13 @@
         android:id="@+id/time_edit"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
-        android:inputType="number"
-        android:maxLength="8"
-        android:textColorHighlight="@color/red_400"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="@color/red_400"
+        android:hint="Minutes"
+        android:inputType="number"
+        android:maxLength="4"
+        android:textColorHighlight="@color/red_400"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

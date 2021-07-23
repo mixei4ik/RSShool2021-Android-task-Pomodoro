@@ -3,6 +3,7 @@ package com.example.rsshool2021_android_task_pomodoro
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool2021_android_task_pomodoro.databinding.ActivityMainBinding
@@ -37,10 +38,18 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             } else {
                 binding.timeEdit.text.toString().toLong()
             }
-            if (currentMin > 0) {
-                timers.add(Timer(nextId++, currentMin * 60 * 1000, currentMin * 60 * 1000, false))
+            if (currentMin in 1..5999) {
+                timers.add(
+                    Timer(
+                        nextId++,
+                        currentMin * 60 * 1000,
+                        currentMin * 60 * 1000,
+                        false,
+                        false
+                    )
+                )
                 timerAdapter.submitList(timers.toList())
-            }
+            } else Toast.makeText(applicationContext, "range 1..5999", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -73,16 +82,12 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     override fun start(id: Int, currentMs: Long) {
         jobTimer?.cancel()
         getCountTimer(id, currentMs)
-        changeTimer(id, currentMs, true)
+        changeTimer(id, currentMs, true, false)
     }
 
-    override fun stop(id: Int, currentMs: Long) {
+    override fun stop(id: Int, currentMs: Long, isFinished: Boolean) {
         jobTimer?.cancel()
-        changeTimer(id, currentMs, false)
-    }
-
-    override fun reset(id: Int) {
-        changeTimer(id, 0L, false)
+        changeTimer(id, currentMs, false, isFinished)
     }
 
     override fun delete(id: Int) {
@@ -90,12 +95,19 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         timerAdapter.submitList(timers.toList())
     }
 
-    private fun changeTimer(id: Int, currentMs: Long, isStarted: Boolean) {
+    private fun changeTimer(id: Int, currentMs: Long, isStarted: Boolean, isFinished: Boolean) {
         for (i in timers.indices) {
-            timers[i] = Timer(timers[i].id, timers[i].initMs, timers[i].currentMs, false)
+            timers[i] =
+                Timer(
+                    timers[i].id,
+                    timers[i].initMs,
+                    timers[i].currentMs,
+                    false,
+                    timers[i].isFinished
+                )
             if (timers[i].id == id) {
                 timers[i] =
-                    Timer(timers[i].id, timers[i].initMs, currentMs, isStarted)
+                    Timer(timers[i].id, timers[i].initMs, currentMs, isStarted, isFinished)
 
             }
         }
@@ -110,11 +122,12 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             while (true) {
                 for (i in timers.indices) {
                     if (timers[i].id == id) {
-                        timers[i].currentMs = currentMsStart - (System.currentTimeMillis() - startTimeTimer)
+                        timers[i].currentMs =
+                            currentMsStart - (System.currentTimeMillis() - startTimeTimer)
                     }
                 }
 
-                delay(100L)
+                delay(10L)
             }
         }
     }

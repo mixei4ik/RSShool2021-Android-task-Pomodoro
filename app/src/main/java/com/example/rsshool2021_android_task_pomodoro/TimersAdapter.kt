@@ -8,7 +8,7 @@ import com.example.rsshool2021_android_task_pomodoro.databinding.TimerItemBindin
 
 class TimersAdapter(
     private val listener: TimerListener
-    ) : ListAdapter<Timer, TimerViewHolder>(itemComparator) {
+) : ListAdapter<Timer, TimerViewHolder>(itemComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

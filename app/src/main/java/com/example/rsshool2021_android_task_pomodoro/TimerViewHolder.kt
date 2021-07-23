@@ -1,6 +1,7 @@
 package com.example.rsshool2021_android_task_pomodoro
 
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +21,13 @@ class TimerViewHolder(
 
     fun bind(timer: Timer) {
         binding.timer.text = timer.currentMs.displayTime()
-        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
-        binding.customView.setCurrent(timer.initMs - timer.currentMs)
+
+        if (timer.isFinished) {
+            binding.timerView.setBackgroundColor(resources.getColor(R.color.red_700))
+        } else {
+            binding.timerView.setBackgroundColor(Color.WHITE)
+            binding.customView.setCurrent(timer.initMs - timer.currentMs)
+        }
 
         if (timer.isStarted) {
             startTimer(timer)
@@ -35,7 +41,7 @@ class TimerViewHolder(
     private fun initButtonsListeners(timer: Timer) {
         binding.startPauseButton.setOnClickListener {
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs)
+                listener.stop(timer.id, timer.currentMs, timer.isFinished)
             } else {
                 listener.start(timer.id, timer.currentMs)
             }
@@ -46,7 +52,6 @@ class TimerViewHolder(
 
     private fun startTimer(timer: Timer) {
         binding.startPauseButton.text = "stop"
-        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
         jobView?.cancel()
         paintView(timer)
@@ -58,10 +63,8 @@ class TimerViewHolder(
 
     private fun stopTimer(timer: Timer) {
         binding.startPauseButton.text = "start"
-        binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
         jobView?.cancel()
-        binding.customView.setCurrent(timer.initMs - timer.currentMs)
 
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
@@ -79,14 +82,14 @@ class TimerViewHolder(
 
                 binding.customView.setCurrent(timer.initMs - timer.currentMs)
                 binding.timer.text = timer.currentMs.displayTime()
-                delay(100L)
+                delay(1000L)
             }
         }
     }
 
     private fun onFinish(timer: Timer) {
-        listener.stop(timer.id, timer.initMs)
-        binding.timerView.setBackgroundColor(resources.getColor(R.color.red_700))
+        timer.isFinished = true
+        listener.stop(timer.id, timer.initMs, timer.isFinished)
         binding.timer.text = timer.currentMs.displayTime()
     }
 }
