@@ -8,6 +8,7 @@ import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rsshool2021_android_task_pomodoro.databinding.TimerItemBinding
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -19,6 +20,7 @@ class TimerViewHolder(
 
     private var timer: CountDownTimer? = null
     private var current = 0L
+    private var jobView: Job? = null
 
     fun bind(timer: Timer) {
         binding.timer.text = timer.currentMs.displayTime()
@@ -49,39 +51,43 @@ class TimerViewHolder(
         binding.startPauseButton.text = "stop"
         binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
-        this.timer?.cancel()
+        jobView?.cancel()
+        paintView(timer)
+/*        this.timer?.cancel()
         this.timer = getCountDownTimer(timer)
-        this.timer?.start()
+        this.timer?.start()*/
 
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
 
-
-
- /*       binding.customView.setPeriod(timer.initMs)
-
-        GlobalScope.launch {
-            while (current < timer.initMs) {
-                current += INTERVAL
-                binding.customView.setCurrent(current)
-                delay(INTERVAL)
-            }
-        }*/
     }
 
     private fun stopTimer(timer: Timer) {
         binding.startPauseButton.text = "start"
         binding.timerView.setBackgroundColor(resources.getColor(R.color.white))
 
-        this.timer?.cancel()
+        jobView?.cancel()
+        binding.customView.setCurrent(timer.initMs - timer.currentMs)
+/*        this.timer?.cancel()*/
 
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
 
+    private fun paintView(timer: Timer) {
+        binding.customView.setPeriod(timer.initMs)
+        jobView = GlobalScope.launch {
+            while (timer.currentMs >= 0) {
+                binding.customView.setCurrent(timer.initMs - timer.currentMs)
+                binding.timer.text = timer.currentMs.displayTime()
+                delay(INTERVAL)
+            }
+        }
+    }
 
 
-    private fun getCountDownTimer(timer: Timer): CountDownTimer {
+
+/*    private fun getCountDownTimer(timer: Timer): CountDownTimer {
         return object : CountDownTimer(PERIOD, UNIT_TEN_MS) {
             val interval = UNIT_TEN_MS
 
@@ -97,7 +103,7 @@ class TimerViewHolder(
                 binding.timer.text = timer.currentMs.displayTime()
             }
         }
-    }
+    }*/
 
     private companion object {
 

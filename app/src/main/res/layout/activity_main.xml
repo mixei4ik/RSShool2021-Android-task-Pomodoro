@@ -23,6 +23,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
         android:inputType="number"
+        android:maxLength="8"
         android:textColorHighlight="@color/red_400"
         android:backgroundTint="@color/red_400"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool2021_android_task_pomodoro.databinding.ActivityMainBinding
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     private val timers = mutableListOf<Timer>()
     private var nextId = 0
     private var startTime = 0L
+    private var jobTimer: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
         }
 
+        if (currentMsFS == 0L) return
+
         startTime = System.currentTimeMillis()
         val startIntent = Intent(this, ForegroundService::class.java)
         startIntent.putExtra(COMMAND_ID, COMMAND_START)
@@ -67,10 +71,13 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     }
 
     override fun start(id: Int, currentMs: Long) {
+        jobTimer?.cancel()
+        getCountTimer(id, currentMs)
         changeTimer(id, currentMs, true)
     }
 
     override fun stop(id: Int, currentMs: Long) {
+        jobTimer?.cancel()
         changeTimer(id, currentMs, false)
     }
 
@@ -94,5 +101,22 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
 
         timerAdapter.submitList(timers.toList())
+    }
+
+    private fun getCountTimer(id: Int, currentMs: Long) {
+        jobTimer = lifecycleScope.launch(Dispatchers.Main) {
+            val startTimeTimer = System.currentTimeMillis()
+            val currentMsStart = currentMs
+            while (true) {
+                for (i in timers.indices) {
+                    if (timers[i].id == id) {
+                        timers[i].currentMs = currentMsStart - (System.currentTimeMillis() - startTimeTimer)
+                    }
+                }
+
+
+                delay(100L)
+            }
+        }
     }
 }
