@@ -24,15 +24,18 @@ class TimerViewHolder(
 
         if (timer.isFinished) {
             binding.timerView.setBackgroundColor(resources.getColor(R.color.red_700))
+
         } else {
             binding.timerView.setBackgroundColor(Color.WHITE)
-            binding.customView.setCurrent(timer.initMs - timer.currentMs)
         }
+
+        binding.customView.setPeriod(timer.initMs)
+        binding.customView.setCurrent(timer.initMs - timer.currentMs)
 
         if (timer.isStarted) {
             startTimer(timer)
         } else {
-            stopTimer(timer)
+            stopTimer()
         }
 
         initButtonsListeners(timer)
@@ -61,7 +64,7 @@ class TimerViewHolder(
 
     }
 
-    private fun stopTimer(timer: Timer) {
+    private fun stopTimer() {
         binding.startPauseButton.text = "start"
 
         jobView?.cancel()
@@ -82,7 +85,7 @@ class TimerViewHolder(
 
                 binding.customView.setCurrent(timer.initMs - timer.currentMs)
                 binding.timer.text = timer.currentMs.displayTime()
-                delay(1000L)
+                delay(100L)
             }
         }
     }

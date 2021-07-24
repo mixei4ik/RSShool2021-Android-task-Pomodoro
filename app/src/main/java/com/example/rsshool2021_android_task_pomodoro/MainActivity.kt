@@ -32,8 +32,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
 
         binding.addNewTimerButton.setOnClickListener {
-            var currentMin = 0L
-            currentMin = if (binding.timeEdit.text.toString() == "") {
+            val currentMin: Long = if (binding.timeEdit.text.toString() == "") {
                 0
             } else {
                 binding.timeEdit.text.toString().toLong()
@@ -45,7 +44,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                         currentMin * 60 * 1000,
                         currentMin * 60 * 1000,
                         false,
-                        false
+                        isFinished = false
                     )
                 )
                 timerAdapter.submitList(timers.toList())
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     override fun start(id: Int, currentMs: Long) {
         jobTimer?.cancel()
         getCountTimer(id, currentMs)
-        changeTimer(id, currentMs, true, false)
+        changeTimer(id, currentMs, true, isFinished = false)
     }
 
     override fun stop(id: Int, currentMs: Long, isFinished: Boolean) {
@@ -118,12 +117,11 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     private fun getCountTimer(id: Int, currentMs: Long) {
         jobTimer = lifecycleScope.launch(Dispatchers.Main) {
             val startTimeTimer = System.currentTimeMillis()
-            val currentMsStart = currentMs
             while (true) {
                 for (i in timers.indices) {
                     if (timers[i].id == id) {
                         timers[i].currentMs =
-                            currentMsStart - (System.currentTimeMillis() - startTimeTimer)
+                            currentMs - (System.currentTimeMillis() - startTimeTimer)
                     }
                 }
 

@@ -1,7 +1,7 @@
 package com.example.rsshool2021_android_task_pomodoro
 
 
-const val START_TIME = "00:00:00"
+const val FINISH_TIME = "00:00:00"
 const val INVALID = "INVALID"
 const val COMMAND_START = "COMMAND_START"
 const val COMMAND_STOP = "COMMAND_STOP"
@@ -11,7 +11,7 @@ const val CURRENT_MS = "CURRENT_MS"
 
 fun Long.displayTime(): String {
     if (this <= 0L) {
-        return START_TIME
+        return FINISH_TIME
     }
     val h = this / 1000 / 3600
     val m = this / 1000 % 3600 / 60
